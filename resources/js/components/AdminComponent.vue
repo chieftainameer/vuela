@@ -54,7 +54,8 @@
     </v-app-bar>
 
     <v-main>
-      <v-container class="fill-height">
+      <v-container class>
+        <router-view></router-view>
         <v-row justify="center" align="center">
           <v-col class="shrink"></v-col>
         </v-row>
