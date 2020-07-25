@@ -1988,19 +1988,24 @@ __webpack_require__.r(__webpack_exports__);
       drawer: null,
       items: [{
         icon: "mdi-trending-up",
-        text: "Most Popular"
+        text: "Users",
+        action: "#"
       }, {
         icon: "mdi-youtube-subscription",
-        text: "Subscriptions"
+        text: "Posts",
+        action: "#"
       }, {
         icon: "mdi-history",
-        text: "History"
+        text: "Pages",
+        action: "#"
       }, {
         icon: "mdi-playlist-play",
-        text: "Playlists"
+        text: "Categories",
+        action: "#"
       }, {
         icon: "mdi-clock",
-        text: "Watch Later"
+        text: "Roles",
+        action: "/admin/roles"
       }],
       items2: [{
         picture: 28,
@@ -2317,10 +2322,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       dialog: false,
+      snackbar: false,
+      text: "",
       headers: [{
         text: "ID",
         align: "start",
@@ -2358,7 +2371,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     fillTitle: function fillTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "New Role" : "Edit Role";
     }
   },
   watch: {
@@ -2373,9 +2386,22 @@ __webpack_require__.r(__webpack_exports__);
     populate: function populate() {
       var _this = this;
 
-      axios.get("/api/roles", {}).then(function (res) {
-        console.log(res.data.roles[0]);
-        _this.roles = res.data.roles;
+      axios.get("/api/roles", {
+        params: {
+          ID: "Ameer Hamza"
+        }
+      }).then(function (res) {
+        //console.log(res.data.roles[0]);
+        //this.roles = res.data.roles;
+        res.data.roles.forEach(function (element) {
+          _this.roles.push(element);
+        });
+      })["catch"](function (err) {
+        if (err.response.status == 401) {
+          localStorage.removeItem("token");
+
+          _this.$router.push("/login");
+        }
       });
     },
     close: function close() {
@@ -2388,10 +2414,24 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     save: function save() {
+      var _this3 = this;
+
       if (this.editedIndex > -1) {
         Object.assign(this.roles[this.editedIndex], this.editedItem);
       } else {
-        this.roles.push(this.editedItem);
+        //this.roles.push(this.editedItem);
+        axios.post("api/roles", this.editedItem).then(function (res) {
+          console.log(res.data.status);
+
+          _this3.roles.push(_this3.editedItem);
+
+          _this3.text = res.data.status;
+          _this3.snackbar = true;
+        })["catch"](function (err) {
+          console.log(err.data.status);
+          _this3.text = res.data.status;
+          _this3.snackbar = true;
+        });
       }
 
       this.close();
@@ -20797,7 +20837,7 @@ var render = function() {
               _vm._l(_vm.items, function(item) {
                 return _c(
                   "v-list-item",
-                  { key: item.text, attrs: { link: "" } },
+                  { key: item.text, attrs: { link: "", to: item.action } },
                   [
                     _c(
                       "v-list-item-action",
@@ -21388,7 +21428,7 @@ var render = function() {
               return [
                 _c(
                   "v-toolbar",
-                  { attrs: { flat: "", white: "" } },
+                  { attrs: { flat: "", light: "", color: "white" } },
                   [
                     _c("v-toolbar-title", [_vm._v("CRUD Operations")]),
                     _vm._v(" "),
@@ -21416,7 +21456,7 @@ var render = function() {
                                     _vm._b(
                                       {
                                         staticClass: "mb-2",
-                                        attrs: { color: "primary", dark: "" }
+                                        attrs: { color: "error", dark: "" }
                                       },
                                       "v-btn",
                                       attrs,
@@ -21424,7 +21464,7 @@ var render = function() {
                                     ),
                                     on
                                   ),
-                                  [_vm._v("New Item")]
+                                  [_vm._v("New Role")]
                                 )
                               ]
                             }
@@ -21669,7 +21709,48 @@ var render = function() {
             proxy: true
           }
         ])
-      })
+      }),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          scopedSlots: _vm._u([
+            {
+              key: "action",
+              fn: function(ref) {
+                var attrs = ref.attrs
+                return [
+                  _c(
+                    "v-btn",
+                    _vm._b(
+                      {
+                        attrs: { color: "pink", text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.snackbar = false
+                          }
+                        }
+                      },
+                      "v-btn",
+                      attrs,
+                      false
+                    ),
+                    [_vm._v("Close")]
+                  )
+                ]
+              }
+            }
+          ]),
+          model: {
+            value: _vm.snackbar,
+            callback: function($$v) {
+              _vm.snackbar = $$v
+            },
+            expression: "snackbar"
+          }
+        },
+        [_vm._v("\n    " + _vm._s(_vm.text) + "\n    ")]
+      )
     ],
     1
   )
@@ -81113,15 +81194,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!****************************************************!*\
   !*** ./resources/js/components/RolesComponent.vue ***!
   \****************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _RolesComponent_vue_vue_type_template_id_524ffdeb_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RolesComponent.vue?vue&type=template&id=524ffdeb&scoped=true& */ "./resources/js/components/RolesComponent.vue?vue&type=template&id=524ffdeb&scoped=true&");
 /* harmony import */ var _RolesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RolesComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/RolesComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _RolesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _RolesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -81151,7 +81231,7 @@ component.options.__file = "resources/js/components/RolesComponent.vue"
 /*!*****************************************************************************!*\
   !*** ./resources/js/components/RolesComponent.vue?vue&type=script&lang=js& ***!
   \*****************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -81309,9 +81389,15 @@ var routes = [{
   path: "/tool",
   component: _components_ToolComponent__WEBPACK_IMPORTED_MODULE_5__["default"]
 }];
-/* harmony default export */ __webpack_exports__["default"] = (new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: routes
-}));
+});
+router.beforeEach(function (to, from, next) {
+  var token = localStorage.getItem("token") || null;
+  window.axios.defaults.headers["Authorization"] = "Bearer " + token;
+  next();
+});
+/* harmony default export */ __webpack_exports__["default"] = (router);
 
 /***/ }),
 

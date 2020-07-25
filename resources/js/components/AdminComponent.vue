@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
-        <v-list-item v-for="item in items" :key="item.text" link>
+        <v-list-item v-for="item in items" :key="item.text" link :to="item.action">
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -77,11 +77,11 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { icon: "mdi-trending-up", text: "Most Popular" },
-      { icon: "mdi-youtube-subscription", text: "Subscriptions" },
-      { icon: "mdi-history", text: "History" },
-      { icon: "mdi-playlist-play", text: "Playlists" },
-      { icon: "mdi-clock", text: "Watch Later" },
+      { icon: "mdi-trending-up", text: "Users", action: "#" },
+      { icon: "mdi-youtube-subscription", text: "Posts", action: "#" },
+      { icon: "mdi-history", text: "Pages", action: "#" },
+      { icon: "mdi-playlist-play", text: "Categories", action: "#" },
+      { icon: "mdi-clock", text: "Roles", action: "/admin/roles" },
     ],
     items2: [
       { picture: 28, text: "Joseph" },

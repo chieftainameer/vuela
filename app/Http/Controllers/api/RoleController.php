@@ -12,20 +12,13 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        //dd($request->ID);
         return response()->json(['roles' => Role::all()]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+   
 
     /**
      * Store a newly created resource in storage.
@@ -35,7 +28,18 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->name);
+        $role = Role::create([
+            'name' => $request->name,
+        ]);
+        if($role)
+        {
+            return response()->json(['status' => "New Role Inserted"]);
+        }
+        else
+        {
+            return respose()->json(['status'=>'Sorry! Some Error Occured']);
+        }
     }
 
     /**

@@ -3,13 +3,13 @@
     <v-alert type="error">Route accessed succesfully</v-alert>
     <v-data-table :headers="headers" :items="roles" sort_by="calories" class="elevation-1">
       <template v-slot:top>
-        <v-toolbar flat white>
+        <v-toolbar flat light color="white">
           <v-toolbar-title>CRUD Operations</v-toolbar-title>
           <v-divider vertical class="mx-4" inset></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on ,attrs}">
-              <v-btn v-bind="attrs" v-on="on" color="primary" class="mb-2" dark>New Item</v-btn>
+              <v-btn v-bind="attrs" v-on="on" color="error" class="mb-2" dark>New Role</v-btn>
             </template>
             <v-card>
               <v-card-title>
@@ -50,12 +50,20 @@
         <v-btn color="primary" @click="populate">Reset</v-btn>
       </template>
     </v-data-table>
+    <v-snackbar v-model="snackbar">
+      {{ text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+      </template>
+    </v-snackbar>
   </v-col>
 </template>
 <script>
 export default {
   data: () => ({
     dialog: false,
+    snackbar: false,
+    text: "",
     headers: [
       {
         text: "ID",
@@ -85,7 +93,7 @@ export default {
   }),
   computed: {
     fillTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "New Role" : "Edit Role";
     },
   },
   watch: {
@@ -98,10 +106,21 @@ export default {
   },
   methods: {
     populate() {
-      axios.get("/api/roles", {}).then((res) => {
-        console.log(res.data.roles[0]);
-        this.roles = res.data.roles;
-      });
+      axios
+        .get("/api/roles", { params: { ID: "Ameer Hamza" } })
+        .then((res) => {
+          //console.log(res.data.roles[0]);
+          //this.roles = res.data.roles;
+          res.data.roles.forEach((element) => {
+            this.roles.push(element);
+          });
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            localStorage.removeItem("token");
+            this.$router.push("/login");
+          }
+        });
     },
     close() {
       this.dialog = false;
@@ -114,7 +133,20 @@ export default {
       if (this.editedIndex > -1) {
         Object.assign(this.roles[this.editedIndex], this.editedItem);
       } else {
-        this.roles.push(this.editedItem);
+        //this.roles.push(this.editedItem);
+        axios
+          .post("api/roles", this.editedItem)
+          .then((res) => {
+            console.log(res.data.status);
+            this.roles.push(this.editedItem);
+            this.text = res.data.status;
+            this.snackbar = true;
+          })
+          .catch((err) => {
+            console.log(err.data.status);
+            this.text = res.data.status;
+            this.snackbar = true;
+          });
       }
       this.close();
     },
