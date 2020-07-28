@@ -2386,11 +2386,7 @@ __webpack_require__.r(__webpack_exports__);
     populate: function populate() {
       var _this = this;
 
-      axios.get("/api/roles", {
-        params: {
-          ID: "Ameer Hamza"
-        }
-      }).then(function (res) {
+      axios.get("/api/roles").then(function (res) {
         //console.log(res.data.roles[0]);
         //this.roles = res.data.roles;
         res.data.roles.forEach(function (element) {
@@ -2417,7 +2413,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       if (this.editedIndex > -1) {
-        Object.assign(this.roles[this.editedIndex], this.editedItem);
+        axios.put("api/roles/" + this.editedItem.id, this.editedItem).then(function (res) {
+          Object.assign(_this3.roles[_this3.editedIndex], _this3.editedItem);
+          _this3.text = res.data.status;
+          _this3.snackbar = true;
+        })["catch"](function (err) {
+          _this3.text = err.data.status;
+          _this3.snackbar = true;
+        }); // Object.assign(this.roles[this.editedIndex], this.editedItem);
       } else {
         //this.roles.push(this.editedItem);
         axios.post("api/roles", this.editedItem).then(function (res) {
@@ -2438,14 +2441,25 @@ __webpack_require__.r(__webpack_exports__);
     },
     editItem: function editItem(item) {
       //alert(item.name);
+      console.log(axios.defaults);
       this.editedIndex = this.roles.indexOf(item);
       this.editedItem = Object.assign({}, item);
       console.log(this.editedItem);
       this.dialog = true;
     },
     deleteItem: function deleteItem(item) {
+      var _this4 = this;
+
       var index = this.roles.indexOf(item);
-      confirm("Are you sure you want to delete the item?") && this.roles.splice(index, 1);
+      confirm("Are you sure you want to delete the item?") && axios["delete"]("api/roles/" + item.id).then(function (res) {
+        _this4.roles.splice(index, 1);
+
+        _this4.text = res.data.status;
+        _this4.snackbar = true;
+      })["catch"](function (err) {
+        _this4.text = res.data.status;
+        _this4.snackbar = true;
+      });
     }
   }
 });
@@ -81359,14 +81373,14 @@ var routes = [{
 }, {
   path: "/login",
   component: _components_LoginComponent__WEBPACK_IMPORTED_MODULE_2__["default"],
-  name: "Login",
-  beforeEnter: function beforeEnter(to, from, next) {
-    if (localStorage.getItem("token")) {
-      next("/admin");
-    } else {
-      next();
-    }
-  }
+  name: "Login" // beforeEnter: (to, from, next) => {
+  //     if (localStorage.getItem("token")) {
+  //         next("/admin");
+  //     } else {
+  //         next();
+  //     }
+  // }
+
 }, {
   path: "/admin",
   component: _components_AdminComponent__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -81376,11 +81390,11 @@ var routes = [{
   }],
   name: "Admin",
   beforeEnter: function beforeEnter(to, from, next) {
-    if (localStorage.getItem("token")) {
+    axios.get("api/user").then(function (res) {
       next();
-    } else {
+    })["catch"](function (err) {
       next("/login");
-    }
+    });
   }
 }, {
   path: "/nav",

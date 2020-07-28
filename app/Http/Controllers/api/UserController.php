@@ -26,4 +26,8 @@ class UserController extends Controller
     }
        return response()->json(['status'=>'incorrect email/password combination'], 403);
     }
+    public function verify(Request $request){
+        //dd($request->user());
+        return $request->user()->only('name','email','api_token');
+    }
 }

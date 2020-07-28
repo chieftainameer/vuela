@@ -16,14 +16,14 @@ const routes = [
     {
         path: "/login",
         component: LoginComponent,
-        name: "Login",
-        beforeEnter: (to, from, next) => {
-            if (localStorage.getItem("token")) {
-                next("/admin");
-            } else {
-                next();
-            }
-        }
+        name: "Login"
+        // beforeEnter: (to, from, next) => {
+        //     if (localStorage.getItem("token")) {
+        //         next("/admin");
+        //     } else {
+        //         next();
+        //     }
+        // }
     },
     {
         path: "/admin",
@@ -36,11 +36,14 @@ const routes = [
         ],
         name: "Admin",
         beforeEnter: (to, from, next) => {
-            if (localStorage.getItem("token")) {
-                next();
-            } else {
-                next("/login");
-            }
+            axios
+                .get("api/user")
+                .then(res => {
+                    next();
+                })
+                .catch(err => {
+                    next("/login");
+                });
         }
     },
     {

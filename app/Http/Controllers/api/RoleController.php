@@ -73,7 +73,17 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $role = Role::find($id);
+        $role->update([
+            "name" => $request->name,
+        ]);
+        if($role){
+            return response()->json(['status' => "Record Updated"]);
+        }
+        else
+        {
+            return  response()->json(['status' => 'Record was not updated']);
+        }
     }
 
     /**
@@ -84,6 +94,13 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $role = Role::find($id);
+        if($role->destroy($id)){
+            return  response()->json(['status' => "Record deleted successfully"]);
+        }
+        else
+        {
+            return response()->json(['status' => 'Could not delete record']);
+        }
     }
 }

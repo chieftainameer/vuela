@@ -107,7 +107,7 @@ export default {
   methods: {
     populate() {
       axios
-        .get("/api/roles", { params: { ID: "Ameer Hamza" } })
+        .get("/api/roles")
         .then((res) => {
           //console.log(res.data.roles[0]);
           //this.roles = res.data.roles;
@@ -131,7 +131,18 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.roles[this.editedIndex], this.editedItem);
+        axios
+          .put("api/roles/" + this.editedItem.id, this.editedItem)
+          .then((res) => {
+            Object.assign(this.roles[this.editedIndex], this.editedItem);
+            this.text = res.data.status;
+            this.snackbar = true;
+          })
+          .catch((err) => {
+            this.text = err.data.status;
+            this.snackbar = true;
+          });
+        // Object.assign(this.roles[this.editedIndex], this.editedItem);
       } else {
         //this.roles.push(this.editedItem);
         axios
@@ -152,6 +163,7 @@ export default {
     },
     editItem(item) {
       //alert(item.name);
+      console.log(axios.defaults);
       this.editedIndex = this.roles.indexOf(item);
       this.editedItem = Object.assign({}, item);
       console.log(this.editedItem);
@@ -160,7 +172,17 @@ export default {
     deleteItem(item) {
       const index = this.roles.indexOf(item);
       confirm("Are you sure you want to delete the item?") &&
-        this.roles.splice(index, 1);
+        axios
+          .delete("api/roles/" + item.id)
+          .then((res) => {
+            this.roles.splice(index, 1);
+            this.text = res.data.status;
+            this.snackbar = true;
+          })
+          .catch((err) => {
+            this.text = res.data.status;
+            this.snackbar = true;
+          });
     },
   },
 };
