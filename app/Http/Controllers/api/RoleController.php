@@ -15,7 +15,8 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         //dd($request->ID);
-        return response()->json(['roles' => Role::all()]);
+        $per_page = $request->per_page;
+        return response()->json(['roles' => Role::paginate($per_page)]);
     }
 
    

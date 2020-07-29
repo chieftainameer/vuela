@@ -2346,6 +2346,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2401,15 +2443,19 @@ __webpack_require__.r(__webpack_exports__);
     this.populate();
   },
   methods: {
-    populate: function populate() {
+    populate: function populate($event) {
       var _this = this;
 
-      axios.get("/api/roles").then(function (res) {
+      console.log($event);
+      axios.get("/api/roles?page=" + $event.page, {
+        params: {
+          per_page: $event.itemsPerPage
+        }
+      }).then(function (res) {
         //console.log(res.data.roles[0]);
-        //this.roles = res.data.roles;
-        res.data.roles.forEach(function (element) {
-          _this.roles.push(element);
-        });
+        _this.roles = res.data.roles; // res.data.roles.forEach(element => {
+        //     this.roles.push(element);
+        // });
       })["catch"](function (err) {
         if (err.response.status == 401) {
           localStorage.removeItem("token");
@@ -2459,8 +2505,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     editItem: function editItem(item) {
       //alert(item.name);
-      console.log(axios.defaults);
-      this.editedIndex = this.roles.indexOf(item);
+      //console.log(this.roles.data.indexOf(item));
+      this.editedIndex = this.roles.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       console.log(this.editedItem);
       this.dialog = true;
@@ -2468,7 +2514,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteItem: function deleteItem(item) {
       var _this4 = this;
 
-      var index = this.roles.indexOf(item);
+      var index = this.roles.data.indexOf(item);
       confirm("Are you sure you want to delete the item?") && axios["delete"]("api/roles/" + item.id).then(function (res) {
         _this4.roles.splice(index, 1);
 
@@ -21478,7 +21524,17 @@ var render = function() {
       _vm._v(" "),
       _c("v-data-table", {
         staticClass: "elevation-1",
-        attrs: { headers: _vm.headers, items: _vm.roles, sort_by: "calories" },
+        attrs: {
+          headers: _vm.headers,
+          items: _vm.roles.data,
+          "items-per-page": 5,
+          "server-items-length": _vm.roles.total,
+          sort_by: "calories",
+          "footer-props": {
+            itemsPerPageOptions: [5, 10, 15]
+          }
+        },
+        on: { pagination: _vm.populate },
         scopedSlots: _vm._u([
           {
             key: "top",
@@ -21807,7 +21863,7 @@ var render = function() {
             expression: "snackbar"
           }
         },
-        [_vm._v("\n    " + _vm._s(_vm.text) + "\n    ")]
+        [_vm._v("\n        " + _vm._s(_vm.text) + "\n        ")]
       )
     ],
     1
