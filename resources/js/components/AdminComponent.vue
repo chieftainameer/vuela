@@ -19,6 +19,11 @@
             <v-list-item-title v-text="item.text"></v-list-item-title>
           </v-list-item>
         </v-list>
+        <v-list-item>
+          <v-list-item-title>
+            <v-switch class="ml-3" v-model="theme" label="Switch Theme"></v-switch>
+          </v-list-item-title>
+        </v-list-item>
         <v-list-item class="mt-4" link>
           <v-list-item-action>
             <v-icon color="grey darken-1">mdi-plus-circle-outline</v-icon>
@@ -34,7 +39,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left color="red" dense>
+    <v-app-bar app clipped-left :color="navColor" dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-icon class="mx-4" large>mdi-youtube</v-icon>
       <v-toolbar-title class="mr-12 align-center">
@@ -76,6 +81,8 @@ export default {
   },
   data: () => ({
     drawer: null,
+    theme: true,
+    navColor: "error",
     items: [
       { icon: "mdi-trending-up", text: "Users", action: "#" },
       { icon: "mdi-youtube-subscription", text: "Posts", action: "#" },
@@ -93,6 +100,16 @@ export default {
   }),
   created() {
     this.$vuetify.theme.dark = true;
+  },
+  watch: {
+    theme: function (old, newValue) {
+      this.$vuetify.theme.dark = old;
+      if (old == false) {
+        this.navColor = "primary";
+      } else {
+        this.navColor = "error";
+      }
+    },
   },
   methods: {
     logout: function () {

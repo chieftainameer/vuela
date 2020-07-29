@@ -1979,6 +1979,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     source: String
@@ -1986,6 +1991,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       drawer: null,
+      theme: true,
+      navColor: "error",
       items: [{
         icon: "mdi-trending-up",
         text: "Users",
@@ -2027,6 +2034,17 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.$vuetify.theme.dark = true;
+  },
+  watch: {
+    theme: function theme(old, newValue) {
+      this.$vuetify.theme.dark = old;
+
+      if (old == false) {
+        this.navColor = "primary";
+      } else {
+        this.navColor = "error";
+      }
+    }
   },
   methods: {
     logout: function logout() {
@@ -20906,6 +20924,30 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "v-list-item",
+                [
+                  _c(
+                    "v-list-item-title",
+                    [
+                      _c("v-switch", {
+                        staticClass: "ml-3",
+                        attrs: { label: "Switch Theme" },
+                        model: {
+                          value: _vm.theme,
+                          callback: function($$v) {
+                            _vm.theme = $$v
+                          },
+                          expression: "theme"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-list-item",
                 { staticClass: "mt-4", attrs: { link: "" } },
                 [
                   _c(
@@ -20958,7 +21000,9 @@ var render = function() {
       _vm._v(" "),
       _c(
         "v-app-bar",
-        { attrs: { app: "", "clipped-left": "", color: "red", dense: "" } },
+        {
+          attrs: { app: "", "clipped-left": "", color: _vm.navColor, dense: "" }
+        },
         [
           _c("v-app-bar-nav-icon", {
             on: {
